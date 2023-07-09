@@ -24,8 +24,8 @@ app.set("port", port);
 /* Llamando a las rutas */
 users(app);
 
-server.listen(3000, "192.168.1.104" || "localhost", function () {
-  console.log("Aplicacion de NodeJS" + process.pid + "iniciando...");
+server.listen(3000, "192.168.1.101" || "localhost", function () {
+  console.log("Aplicacion de NodeJS " + process.pid + " iniciando...");
 });
 
 app.get("/", (req, res) => {
