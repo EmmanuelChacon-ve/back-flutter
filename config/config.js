@@ -12,9 +12,9 @@ types.setTypeParser(1114, function (stringValue) {
 const databaseConfig = {
   host: "127.0.0.1",
   port: 5432,
-  database: "jabes_db",
+  database: "jabes-first",
   user: "postgres",
-  password: "Emmanuel03$",
+  password: "123munoz123",
 };
 
 const db = pgp(databaseConfig);
