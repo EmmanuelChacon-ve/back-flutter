@@ -80,6 +80,14 @@ module.exports = {
         });
       }
 
+      // Verificar si ya tiene una sesión activa
+      if (myUser.session_token != null) {
+        return res.status(401).json({
+          success: false,
+          message: "El usuario ya tiene una sesión activa en otro dispositivo",
+        });
+      }
+
       if (User.isPasswordMatched(password, myUser.password)) {
         const token = jwt.sign(
           { id: myUser.id, email: myUser.email },
@@ -96,12 +104,11 @@ module.exports = {
           email: myUser.email,
           phone: myUser.phone,
           image: myUser.image,
-          session_token: `JWT ${token}`, // REVISA QUE ESTE LLEGANDO ESTE CAMPO
+          session_token: `JWT ${token}`,
           roles: myUser.roles,
         };
 
-        console.log(`DATA ENVIADA ${data}`); // AQUI PUEDES VER QUE DATOS ESTAS ENVIANDO
-
+        console.log(`DATA ENVIADA ${data}`);
         return res.status(201).json({
           success: true,
           data: data,
