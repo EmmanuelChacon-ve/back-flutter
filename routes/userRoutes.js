@@ -3,7 +3,7 @@ const UsersController = require("../controllers/usersController");
 module.exports = (app, upload) => {
   // TRAER DATOS
   app.get("/api/users/getAll", UsersController.getAll);
-
+  app.get("/api/users/findById/:id", UsersController.findById); //los dos : indica que es ues un parametro
   //Crear o Guardar Datos
   app.post(
     "/api/users/create",
