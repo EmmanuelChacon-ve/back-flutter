@@ -106,6 +106,32 @@ User.create = (user) => {
   ]);
 };
 
+User.Update = (user) =>{
+const sql=`
+UPDATE
+    users
+SET
+    name=$2,
+    lastname=$3,
+    phone=$4,
+    image=$5,
+    updated_at=$6
+WHERE
+    id=$1
+    `;
+return db.oneOrNone(sql, [
+  user.id,
+  user.name,
+  user.lastname,
+  user.phone,
+  user.image,
+  new Date()
+
+]);
+};
+
+
+
 User.isPasswordMatched = (userPassword, hash) => {
   const myPasswordHashed = crypto
     .createHash("md5")

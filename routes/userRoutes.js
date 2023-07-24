@@ -11,4 +11,8 @@ module.exports = (app, upload) => {
     UsersController.registerWithImage
   ); // cada vez que hagamos un post hay una insertion de datos
   app.post("/api/users/login", UsersController.login);
+
+  //Actualizar datos
+  app.put("/api/users/update",  upload.array("image", 1),
+    UsersController.update)
 };
