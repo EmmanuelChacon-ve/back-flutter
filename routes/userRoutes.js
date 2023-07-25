@@ -12,7 +12,7 @@ module.exports = (app, upload) => {
   ); // cada vez que hagamos un post hay una insertion de datos
   app.post("/api/users/login", UsersController.login);
 
-  //Actualizar datos
+  //Actualizar datos en editar perfil
   app.put("/api/users/update",  upload.array("image", 1),
     UsersController.update)
 };
