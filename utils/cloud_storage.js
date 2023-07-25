@@ -6,11 +6,11 @@ const { v4: uuidv4 } = require("uuid");
 const uuid = uuidv4();
 
 const storage = new Storage({
-  projectId: "jabesapp-8f3cb",
+  projectId: "jabes-app-abe40",
   keyFilename: "./serviceAccountKey.json",
 });
 
-const bucket = storage.bucket("gs://jabesapp-8f3cb.appspot.com/");
+const bucket = storage.bucket("gs://jabes-app-abe40.appspot.com");
 
 /**
  * Subir el archivo a Firebase Storage
