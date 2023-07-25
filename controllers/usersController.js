@@ -25,7 +25,7 @@ module.exports = {
       await Rol.create(data.id, 1); // ROL POR DEFECTO (CLIENTE)
       return res.status(201).json({
         success: true,
-        message: "El registro se realizo correctamente, ahora inicia sesion",
+        message: "El registro se realizo correctamente, ahora inicia sesionn",
         data: data.id,
       });
     } catch (error) {
