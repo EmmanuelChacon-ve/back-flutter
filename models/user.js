@@ -35,6 +35,43 @@ User.findById = (id, callback) => {
   });
 };
 
+User.findByUserId = (id) => {
+  const sql = `
+  SELECT
+      U.id,
+      U.email,
+      U.name,
+      U.lastname,
+      U.image,
+      U.phone,
+      U.password,
+      U.session_token,
+      json_agg(
+          json_build_object(
+              'id', R.id,
+              'name', R.name,
+              'image', R.image,
+              'route', R.route
+          )
+      ) AS roles
+  FROM 
+      users AS U
+  INNER JOIN
+      user_has_roles AS UHR
+  ON
+      UHR.id_user = U.id
+  INNER JOIN
+      roles AS R
+  ON
+      R.id = UHR.id_rol
+  WHERE
+      U.id = $1
+  GROUP BY
+      U.id
+  `;
+  return db.oneOrNone(sql, id);
+};
+
 User.findByEmail = (email) => {
   const sql = `
   SELECT
@@ -104,6 +141,42 @@ User.create = (user) => {
     new Date(),
     new Date(),
   ]);
+};
+
+User.Update = (user) => {
+  const sql = `
+UPDATE
+    users
+SET
+    name=$2,
+    lastname=$3,
+    phone=$4,
+    image=$5,
+    updated_at=$6
+WHERE
+    id=$1
+    `;
+  return db.oneOrNone(sql, [
+    user.id,
+    user.name,
+    user.lastname,
+    user.phone,
+    user.image,
+    new Date(),
+  ]);
+};
+
+User.updateToken = (id, token) => {
+  const sql = `
+    UPDATE
+        users
+    SET
+        session_token = $2
+    WHERE
+        id = $1
+    `;
+
+  return db.none(sql, [id, token]);
 };
 
 User.isPasswordMatched = (userPassword, hash) => {

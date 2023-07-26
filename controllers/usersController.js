@@ -18,6 +18,24 @@ module.exports = {
       });
     }
   },
+
+  async findById(req, res, next) {
+    try {
+      const id = req.params.id;
+
+      const data = await User.findByUserId(id); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuario: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener el usuario por ID",
+      });
+    }
+  },
+
   async register(req, res, next) {
     try {
       const user = req.body; // para capturar lo que el cliente nos envia como parametros
@@ -66,6 +84,37 @@ module.exports = {
       });
     }
   },
+
+  async update(req, res, next) {
+    try {
+      const user = JSON.parse(req.body.user); // para capturar lo que el cliente nos envia como parametros
+      console.log(`Datos ${JSON.stringify(user)}`);
+
+      const files = req.files;
+      if (files.length > 0) {
+        const pathImage = `image_${Date.now()}`; //mombre de archivo a almacenar
+        const url = await storage(files[0], pathImage);
+
+        if (url != undefined && url != null) {
+          user.image = url;
+        }
+      }
+      await User.Update(user);
+      console.log(user);
+      return res.status(201).json({
+        success: true,
+        message: "Los datos del usuario fueron actualizados correctamente",
+        user,
+      });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        success: false,
+        message: "Hubo un error en la actualización de datos del usuario",
+        error: error,
+      });
+    }
+  },
   async login(req, res, next) {
     try {
       const email = req.body.email;
@@ -81,12 +130,12 @@ module.exports = {
       }
 
       // Verificar si ya tiene una sesión activa
-      if (myUser.session_token != null) {
+      /*       if (myUser.session_token != null) {
         return res.status(401).json({
           success: false,
           message: "El usuario ya tiene una sesión activa en otro dispositivo",
         });
-      }
+      } */
 
       if (User.isPasswordMatched(password, myUser.password)) {
         const token = jwt.sign(
@@ -107,6 +156,8 @@ module.exports = {
           session_token: `JWT ${token}`,
           roles: myUser.roles,
         };
+
+        await User.updateToken(myUser.id, `JWT ${token}`);
 
         console.log(`DATA ENVIADA ${data}`);
         return res.status(201).json({
