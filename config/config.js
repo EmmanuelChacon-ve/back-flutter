@@ -14,7 +14,7 @@ const databaseConfig = {
   port: 5432,
   database: "jabes-first",
   user: "postgres",
-  password: "123munoz123",
+  password: "Cesar28457781",
 };
 
 const db = pgp(databaseConfig);

@@ -1,9 +1,9 @@
 const UsersController = require("../controllers/usersController");
-
+const paymentController = require("../controllers/paymentController");
 module.exports = (app, upload) => {
   // TRAER DATOS
   app.get("/api/users/getAll", UsersController.getAll);
-
+  app.get("/api/users/payment", paymentController.getAllSelector)
   //Crear o Guardar Datos
   app.post(
     "/api/users/create",
