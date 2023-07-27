@@ -18,6 +18,24 @@ module.exports = {
       });
     }
   },
+
+  async findById(req, res, next) {
+    try {
+      const id = req.params.id;
+
+      const data = await User.findByUserId(id); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuario: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener el usuario por ID",
+      });
+    }
+  },
+
   async register(req, res, next) {
     try {
       const user = req.body; // para capturar lo que el cliente nos envia como parametros
@@ -25,7 +43,7 @@ module.exports = {
       await Rol.create(data.id, 1); // ROL POR DEFECTO (CLIENTE)
       return res.status(201).json({
         success: true,
-        message: "El registro se realizo correctamente, ahora inicia sesion",
+        message: "El registro se realizo correctamente, ahora inicia sesionn",
         data: data.id,
       });
     } catch (error) {
@@ -66,6 +84,37 @@ module.exports = {
       });
     }
   },
+
+  async update(req, res, next) {
+    try {
+      const user = JSON.parse(req.body.user); // para capturar lo que el cliente nos envia como parametros
+      console.log(`Datos ${JSON.stringify(user)}`);
+
+      const files = req.files;
+      if (files.length > 0) {
+        const pathImage = `image_${Date.now()}`; //mombre de archivo a almacenar
+        const url = await storage(files[0], pathImage);
+
+        if (url != undefined && url != null) {
+          user.image = url;
+        }
+      }
+      await User.Update(user);
+      console.log(user);
+      return res.status(201).json({
+        success: true,
+        message: "Los datos del usuario fueron actualizados correctamente",
+        user,
+      });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        success: false,
+        message: "Hubo un error en la actualización de datos del usuario",
+        error: error,
+      });
+    }
+  },
   async login(req, res, next) {
     try {
       const email = req.body.email;
@@ -80,21 +129,13 @@ module.exports = {
         });
       }
 
-      // Verificar si ya tiene una sesión activa
-      if (myUser.session_token != null) {
-        return res.status(401).json({
-          success: false,
-          message: "El usuario ya tiene una sesión activa en otro dispositivo",
-        });
-      }
-
       if (User.isPasswordMatched(password, myUser.password)) {
         const token = jwt.sign(
           { id: myUser.id, email: myUser.email },
           keys.secretOrKey,
           {
             // expiresIn: (60*60*24) // 1 HORA
-            // expiresIn: (60 * 3) // 2 MINUTO
+            expiresIn: 60 * 3, // 2 MINUTO
           }
         );
         const data = {
@@ -108,7 +149,10 @@ module.exports = {
           roles: myUser.roles,
         };
 
-        console.log(`DATA ENVIADA ${data}`);
+        await User.updateToken(myUser.id, `JWT ${token}`);
+
+        console.log(`USUARIO ENVIADO ${data}`);
+
         return res.status(201).json({
           success: true,
           data: data,
@@ -126,6 +170,23 @@ module.exports = {
         success: false,
         message: "Error al momento de hacer login",
         error: error,
+      });
+    }
+  },
+  async logout(req, res, next) {
+    try {
+      const id = req.body.id;
+      await User.deleteToken(id); // Utilizamos la función deleteToken para eliminar el token
+      return res.status(201).json({
+        success: true,
+        message: "La sesión del usuario se ha cerrado correctamente",
+      });
+    } catch (e) {
+      console.log(`Error: ${e}`);
+      return res.status(501).json({
+        success: false,
+        message: "Error al momento de cerrar sesión",
+        error: e,
       });
     }
   },
