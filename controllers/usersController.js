@@ -135,7 +135,7 @@ module.exports = {
           keys.secretOrKey,
           {
             // expiresIn: (60*60*24) // 1 HORA
-            // expiresIn: (60 * 3) // 2 MINUTO
+            expiresIn: 60 * 3, // 2 MINUTO
           }
         );
         const data = {
@@ -170,6 +170,23 @@ module.exports = {
         success: false,
         message: "Error al momento de hacer login",
         error: error,
+      });
+    }
+  },
+  async logout(req, res, next) {
+    try {
+      const id = req.body.id;
+      await User.deleteToken(id); // Utilizamos la función deleteToken para eliminar el token
+      return res.status(201).json({
+        success: true,
+        message: "La sesión del usuario se ha cerrado correctamente",
+      });
+    } catch (e) {
+      console.log(`Error: ${e}`);
+      return res.status(501).json({
+        success: false,
+        message: "Error al momento de cerrar sesión",
+        error: e,
       });
     }
   },

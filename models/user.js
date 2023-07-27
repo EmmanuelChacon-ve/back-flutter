@@ -165,7 +165,6 @@ WHERE
     new Date(),
   ]);
 };
-
 User.updateToken = (id, token) => {
   const sql = `
     UPDATE
@@ -177,6 +176,18 @@ User.updateToken = (id, token) => {
     `;
 
   return db.none(sql, [id, token]);
+};
+User.deleteToken = (id) => {
+  const sql = `
+    UPDATE
+        users
+    SET
+        session_token = NULL
+    WHERE
+        id = $1
+    `;
+
+  return db.none(sql, [id]);
 };
 
 User.isPasswordMatched = (userPassword, hash) => {
