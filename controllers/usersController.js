@@ -129,14 +129,6 @@ module.exports = {
         });
       }
 
-      // Verificar si ya tiene una sesión activa
-      /*       if (myUser.session_token != null) {
-        return res.status(401).json({
-          success: false,
-          message: "El usuario ya tiene una sesión activa en otro dispositivo",
-        });
-      } */
-
       if (User.isPasswordMatched(password, myUser.password)) {
         const token = jwt.sign(
           { id: myUser.id, email: myUser.email },
@@ -159,7 +151,8 @@ module.exports = {
 
         await User.updateToken(myUser.id, `JWT ${token}`);
 
-        console.log(`DATA ENVIADA ${data}`);
+        console.log(`USUARIO ENVIADO ${data}`);
+
         return res.status(201).json({
           success: true,
           data: data,
