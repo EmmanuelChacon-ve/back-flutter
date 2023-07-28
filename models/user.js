@@ -35,8 +35,7 @@ User.findById = (id, callback) => {
   });
 };
 
-
-User.findByUserId= (id) => {
+User.findByUserId = (id) => {
   const sql = `
   SELECT
       U.id,
@@ -70,7 +69,7 @@ User.findByUserId= (id) => {
   GROUP BY
       U.id
   `;
-  return db.oneOrNone(sql,id);
+  return db.oneOrNone(sql, id);
 };
 
 User.findByEmail = (email) => {
@@ -144,8 +143,8 @@ User.create = (user) => {
   ]);
 };
 
-User.Update = (user) =>{
-const sql=`
+User.Update = (user) => {
+  const sql = `
 UPDATE
     users
 SET
@@ -157,18 +156,39 @@ SET
 WHERE
     id=$1
     `;
-return db.oneOrNone(sql, [
-  user.id,
-  user.name,
-  user.lastname,
-  user.phone,
-  user.image,
-  new Date()
-
-]);
+  return db.oneOrNone(sql, [
+    user.id,
+    user.name,
+    user.lastname,
+    user.phone,
+    user.image,
+    new Date(),
+  ]);
 };
+User.updateToken = (id, token) => {
+  const sql = `
+    UPDATE
+        users
+    SET
+        session_token = $2
+    WHERE
+        id = $1
+    `;
 
+  return db.none(sql, [id, token]);
+};
+User.deleteToken = (id) => {
+  const sql = `
+    UPDATE
+        users
+    SET
+        session_token = NULL
+    WHERE
+        id = $1
+    `;
 
+  return db.none(sql, [id]);
+};
 
 User.isPasswordMatched = (userPassword, hash) => {
   const myPasswordHashed = crypto
