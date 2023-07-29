@@ -20,7 +20,10 @@ const upload = multer({
 });
 /* RUTAS */
 const users = require("./routes/userRoutes");
+const categories = require("./routes/categoryRoutes");
+const produt = require("./routes/productRoutes");
 const { multiResult } = require("./config/config");
+const Product = require("./models/product");
 
 const port = process.env.PORT || 3000;
 
@@ -52,8 +55,10 @@ app.set("port", port);
 
 /* Llamando a las rutas */
 users(app, upload);
+categories(app, upload);
+produt(app, upload);
 
-server.listen(3000, "192.168.1.103" || "localhost", function () {
+server.listen(3000, "192.168.1.102" || "localhost", function () {
   console.log("Aplicacion de NodeJS " + process.pid + " iniciando...");
 });
 
