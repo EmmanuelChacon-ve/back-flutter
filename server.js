@@ -7,6 +7,7 @@ const cors = require("cors");
 const multer = require("multer");
 const admin = require("firebase-admin");
 const serviceAccountKey = require("./serviceAccountKey.json");
+const ip = require("ip");
 /*
  * INICIALIZAR FIREBASE ADMIN
  */
@@ -19,7 +20,9 @@ const upload = multer({
 /* RUTAS */
 const users = require("./routes/userRoutes");
 const { multiResult } = require("./config/config");
+const { isPrivate } = require("ip");
 
+const serverIp = ip.address();
 const port = process.env.PORT || 3000;
 
 app.use(logger("dev"));
@@ -36,7 +39,7 @@ app.set("port", port);
 /* Llamando a las rutas */
 users(app, upload);
 
-server.listen(3000, "192.168.0.107" || "localhost", function () {
+server.listen(3000, serverIp || "localhost", function () {
   console.log("Aplicacion de NodeJS " + process.pid + " iniciando...");
 });
 
