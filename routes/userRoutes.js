@@ -4,6 +4,13 @@ const passport = require("passport");
 module.exports = (app, upload) => {
   // TRAER DATOS
   app.get("/api/users/getAll", UsersController.getAll);
+  app.get("/api/users/getAllrol", UsersController.getAllrol);
+  app.get(
+    "/api/users/getAlluser_has_roles",
+    UsersController.getAlluser_has_roles
+  );
+  app.get("/api/users/findAllp", UsersController.findAllp);
+  app.get("/api/users/getAllCategoria", UsersController.getAllCategoria);
   app.get(
     "/api/users/findById/:id",
     passport.authenticate("jwt", { session: false }),

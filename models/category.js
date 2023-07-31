@@ -9,9 +9,9 @@ Category.getAll = () => {
             name,
             description
         FROM
-            categories
+            causes.categories
         ORDER BY
-            name
+            id
     `;
 
   return db.manyOrNone(sql);
@@ -19,14 +19,15 @@ Category.getAll = () => {
 Category.create = (category, userId) => {
   const sql = `
     INSERT INTO
-        categories(
-            user_id,
+        causes.categories(
+            id_user,
             name,
             description,
             created_at,
-            updated_at
+            updated_at,
+            status
         )
-    VALUES ($1, $2, $3, $4, $5) RETURNING id
+    VALUES ($1, $2, $3, $4, $5,$6) RETURNING id
     `;
   return db.oneOrNone(sql, [
     userId, // Insertamos el ID del usuario en la columna user_id
@@ -34,6 +35,7 @@ Category.create = (category, userId) => {
     category.description,
     new Date(),
     new Date(),
+    true,
   ]);
 };
 module.exports = Category;

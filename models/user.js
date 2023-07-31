@@ -9,7 +9,7 @@ User.getAll = () => {
       SELECT 
           *
       FROM
-          users
+          users.users
       `;
 
   return db.manyOrNone(sql); // retorname en esta consulta muchos o ningun usuario
@@ -26,7 +26,7 @@ User.findById = (id, callback) => {
       password,
       session_token
   FROM
-      users
+      users.users
   WHERE
       id = $1`;
 
@@ -55,13 +55,13 @@ User.findByUserId = (id) => {
           )
       ) AS roles
   FROM 
-      users AS U
+      users.users AS U
   INNER JOIN
-      user_has_roles AS UHR
+      users.user_has_roles AS UHR
   ON
       UHR.id_user = U.id
   INNER JOIN
-      roles AS R
+      users.roles AS R
   ON
       R.id = UHR.id_rol
   WHERE
@@ -92,13 +92,13 @@ User.findByEmail = (email) => {
           )
       ) AS roles
   FROM 
-      users AS U
+      users.users AS U
   INNER JOIN
-      user_has_roles AS UHR
+      users.user_has_roles AS UHR
   ON
       UHR.id_user = U.id
   INNER JOIN
-      roles AS R
+      users.roles AS R
   ON
       R.id = UHR.id_rol
   WHERE
@@ -117,7 +117,7 @@ User.create = (user) => {
   user.password = myPasswordHashed;
   const sql = `
     INSERT INTO
-        users(
+        users.users(
             email,
             name,
             lastname,
@@ -126,6 +126,7 @@ User.create = (user) => {
             password,
             created_at,
             updated_at
+            
         )
     VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id
     `;
@@ -146,7 +147,7 @@ User.create = (user) => {
 User.Update = (user) => {
   const sql = `
 UPDATE
-    users
+    users.users
 SET
     name=$2,
     lastname=$3,
@@ -168,7 +169,7 @@ WHERE
 User.updateToken = (id, token) => {
   const sql = `
     UPDATE
-        users
+        users.users
     SET
         session_token = $2
     WHERE
@@ -180,7 +181,7 @@ User.updateToken = (id, token) => {
 User.deleteToken = (id) => {
   const sql = `
     UPDATE
-        users
+        users.users
     SET
         session_token = NULL
     WHERE

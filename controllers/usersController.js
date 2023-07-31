@@ -19,6 +19,64 @@ module.exports = {
     }
   },
 
+  async getAllrol(req, res, next) {
+    try {
+      const data = await Rol.getAllrol(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+
+  async getAlluser_has_roles(req, res, next) {
+    try {
+      const data = await Rol.getAlluser_has_roles(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+
+  async findAllp(req, res, next) {
+    try {
+      const data = await Rol.findAllp(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+  async getAllCategoria(req, res, next) {
+    try {
+      const data = await Rol.getAllCategoria(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
   async findById(req, res, next) {
     try {
       const id = req.params.id;

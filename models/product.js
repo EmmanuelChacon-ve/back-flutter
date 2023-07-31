@@ -8,13 +8,24 @@ Product.findAll = () => {
       SELECT 
           *
       FROM
-      products
+      causes.causes
       ORDER BY
       name
       `;
 
   return db.manyOrNone(sql); // retorname en esta consulta muchos o ningun usuario
 };
+/* Product.findAllp = () => {
+  // un metodo
+  const sql = `
+      SELECT 
+          *
+      FROM
+      causes.causes
+      `;
+
+  return db.manyOrNone(sql); // retorname en esta consulta muchos o ningun usuario
+}; */
 
 Product.findByCategory = (id_category) => {
   const sql = `
@@ -27,9 +38,9 @@ Product.findByCategory = (id_category) => {
         P.image3,
         P.id_category
     FROM
-        products AS P
+        causes.causes AS P
     INNER JOIN
-        categories AS C
+        causes.categories AS C
     ON
         P.id_category = C.id
     WHERE
@@ -51,9 +62,9 @@ Product.findByCategoryAndProductName = (id_category, product_name) => {
         P.image3,
         P.id_category
     FROM
-        products AS P
+        causes.causes AS P
     INNER JOIN
-        categories AS C
+        causes.categories AS C
     ON
         P.id_category = C.id
     WHERE
@@ -66,7 +77,7 @@ Product.findByCategoryAndProductName = (id_category, product_name) => {
 /* Product.create = (product) => {
   const sql = `
     INSERT INTO
-        products(
+        causes(
             name,
             description,
             price,
@@ -95,7 +106,7 @@ Product.findByCategoryAndProductName = (id_category, product_name) => {
 /* Product.update = (product) => {
   const sql = `
     UPDATE
-        products
+        causes
     SET
         name = $2,
         description = $3,
@@ -125,7 +136,7 @@ Product.findByCategoryAndProductName = (id_category, product_name) => {
 Product.create = (product, userId) => {
   const sql = `
       INSERT INTO
-          products(
+          causes.causes(
               id_user,
               name,
               description,
@@ -134,9 +145,10 @@ Product.create = (product, userId) => {
               image3,
               id_category,
               created_at,
-              updated_at
+              updated_at,
+              status
           )
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id
       `;
   return db.oneOrNone(sql, [
     userId, // Aquí proporciona el id del usuario que hizo el registro
@@ -148,13 +160,14 @@ Product.create = (product, userId) => {
     product.id_category,
     new Date(),
     new Date(),
+    true,
   ]);
 };
 
 Product.update = (product, userId) => {
   const sql = `
       UPDATE
-          products
+          causes.causes
       SET
           id_user = $2,
           name = $3,

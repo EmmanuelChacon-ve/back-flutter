@@ -58,7 +58,7 @@ users(app, upload);
 categories(app, upload);
 produt(app, upload);
 
-server.listen(3000, "192.168.1.102" || "localhost", function () {
+server.listen(3000, "192.168.1.104" || "localhost", function () {
   console.log("Aplicacion de NodeJS " + process.pid + " iniciando...");
 });
 

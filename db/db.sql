@@ -61,7 +61,8 @@ CREATE TABLE users(
 	session_token VARCHAR(255) NULL,
 	notification_token VARCHAR(255) NULL,
 	created_at TIMESTAMP(0) NOT NULL,
-	updated_at TIMESTAMP(0) NOT NULL
+	updated_at TIMESTAMP(0) NOT NULL,
+	status BOOLEAN NULL
 );
 
 DROP TABLE IF EXISTS user_has_roles CASCADE;
@@ -70,11 +71,22 @@ CREATE TABLE user_has_roles(
 	id_rol BIGSERIAL NOT NULL,
 	created_at TIMESTAMP(0) NOT NULL,
 	updated_at TIMESTAMP(0) NOT NULL,
+	status BOOLEAN NULL
 	FOREIGN KEY(id_user) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	FOREIGN KEY(id_rol) REFERENCES roles(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	PRIMARY KEY(id_user, id_rol)
 );
-
+DROP TABLE IF EXISTS users.suser_has_roles CASCADE;
+CREATE TABLE users.user_has_roles(
+	id_user BIGSERIAL NOT NULL,
+	id_rol BIGSERIAL NOT NULL,
+	created_at TIMESTAMP(0) NOT NULL,
+	updated_at TIMESTAMP(0) NOT NULL,
+	status BOOLEAN NULL,
+	FOREIGN KEY(id_user) REFERENCES users.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY(id_rol) REFERENCES users.roles(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY(id_user, id_rol)
+);
 
 DROP TABLE IF EXISTS categories CASCADE;
 CREATE TABLE categories (
@@ -86,7 +98,7 @@ CREATE TABLE categories (
     updated_at TIMESTAMP(0) NOT NULL
 );
 
-DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS causas CASCADE;
 CREATE TABLE products (
     id BIGSERIAL PRIMARY KEY,
 	id_user BIGINT NOT NULL, 
@@ -101,3 +113,23 @@ CREATE TABLE products (
     FOREIGN KEY (id_category) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (id_user) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE -- Relación con la tabla users
 );
+
+DROP TABLE IF EXISTS causes CASCADE;
+ALTER TABLE causes.categories OWNER TO postgres;
+CREATE TABLE causes.causes (
+	id SERIAL PRIMARY KEY,
+	id_user BIGINT NOT NULL,
+	name VARCHAR(180) NOT NULL UNIQUE,
+	description VARCHAR(255) NOT NULL,
+	image1 VARCHAR(255) NULL,
+	image2 VARCHAR(255) NULL,
+	image3 VARCHAR(255) NULL,
+	id_category BIGINT NOT NULL,
+	created_at TIMESTAMP(0) NOT NULL,
+	updated_at TIMESTAMP(0) NOT NULL,
+	status BOOLEAN  NULL,
+	FOREIGN KEY(id_category) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE,
+	OREIGN KEY (id_user) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+ALTER TABLE causes.causes OWNER TO postgres;
+
