@@ -56,7 +56,6 @@ Product.findByCategoryAndProductName = (id_category, product_name) => {
         P.id,
         P.name,
         P.description,
-        P.price,
         P.image1,
         P.image2,
         P.image3,
