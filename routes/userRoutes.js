@@ -1,7 +1,10 @@
 const UsersController = require("../controllers/usersController");
 const passport = require("passport");
 
+const paymentController = require("../controllers/paymentController");
+const usersController = require("../controllers/usersController");
 module.exports = (app, upload) => {
+  //GET
   // TRAER DATOS
   app.get("/api/users/getAll", UsersController.getAll);
   app.get("/api/users/getAllrol", UsersController.getAllrol);
@@ -17,7 +20,11 @@ module.exports = (app, upload) => {
     UsersController.findById
   );
   //los dos : indica que es ues un parametro
+  app.get("/api/users/payment", paymentController.getAllSelector);
+  app.get("/api/users/pay", paymentController.getAllPay);
+  /*  app.get("/api/users/findById/:id", UsersController.findById); */ //los dos : indica que es ues un parametro
   //Crear o Guardar Datos
+  //POST
   app.post(
     "/api/users/create",
     upload.array("image", 1),
@@ -32,4 +39,14 @@ module.exports = (app, upload) => {
     upload.array("image", 1),
     UsersController.update
   );
+  //AGREGANDO LOGICA INSERT PAGO
+  app.post(
+    "/api/users/insertPayment",
+    upload.array("image", 1),
+    paymentController.insertarPago
+  );
+  //
+  //PUT
+
+  //DELETE
 };

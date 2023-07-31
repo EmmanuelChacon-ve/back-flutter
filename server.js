@@ -24,7 +24,6 @@ const categories = require("./routes/categoryRoutes");
 const produt = require("./routes/productRoutes");
 const { multiResult } = require("./config/config");
 const Product = require("./models/product");
-
 const port = process.env.PORT || 3000;
 
 app.use(logger("dev"));
