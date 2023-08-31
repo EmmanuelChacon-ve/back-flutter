@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Rol = require("../models/rol");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
+const storage = require("../utils/cloud_storage");
 module.exports = {
   async getAll(req, res, next) {
     try {
@@ -17,9 +18,114 @@ module.exports = {
       });
     }
   },
+
+  async getAllrol(req, res, next) {
+    try {
+      const data = await Rol.getAllrol(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+
+  async getAlluser_has_roles(req, res, next) {
+    try {
+      const data = await Rol.getAlluser_has_roles(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+
+  async findAllp(req, res, next) {
+    try {
+      const data = await Rol.findAllp(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+  async getAllCategoria(req, res, next) {
+    try {
+      const data = await Rol.getAllCategoria(); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuarios: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener los usuarios",
+      });
+    }
+  },
+  async findById(req, res, next) {
+    try {
+      const id = req.params.id;
+
+      const data = await User.findByUserId(id); // el await espera a que se ejecute la consulta para seguir con el codigo
+      console.log(`Usuario: ${data}`);
+      return res.status(201).json(data);
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        // el res se utiliza para retornar una respuesta al cliente, api , aplicacion etc etc
+        success: false,
+        message: "Error al obtener el usuario por ID",
+      });
+    }
+  },
+
   async register(req, res, next) {
     try {
       const user = req.body; // para capturar lo que el cliente nos envia como parametros
+      const data = await User.create(user);
+      await Rol.create(data.id, 1); // ROL POR DEFECTO (CLIENTE)
+      return res.status(201).json({
+        success: true,
+        message: "El registro se realizo correctamente, ahora inicia sesionn",
+        data: data.id,
+      });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        success: false,
+        message: "Hubo un error con el registro del usuario",
+        error: error,
+      });
+    }
+  },
+  async registerWithImage(req, res, next) {
+    try {
+      const user = JSON.parse(req.body.user); // para capturar lo que el cliente nos envia como parametros
+      console.log(`datos enviados del usuario: ${user}`);
+      const files = req.files;
+      if (files.length > 0) {
+        const pathImage = `image_${Date.now()}`; //mombre de archivo a almacenar
+        const url = await storage(files[0], pathImage);
+
+        if (url != undefined && url != null) {
+          user.image = url;
+        }
+      }
       const data = await User.create(user);
       await Rol.create(data.id, 1); // ROL POR DEFECTO (CLIENTE)
       return res.status(201).json({
@@ -32,6 +138,37 @@ module.exports = {
       return res.status(501).json({
         success: false,
         message: "Hubo un error con el registro del usuario",
+        error: error,
+      });
+    }
+  },
+
+  async update(req, res, next) {
+    try {
+      const user = JSON.parse(req.body.user); // para capturar lo que el cliente nos envia como parametros
+      console.log(`Datos ${JSON.stringify(user)}`);
+
+      const files = req.files;
+      if (files.length > 0) {
+        const pathImage = `image_${Date.now()}`; //mombre de archivo a almacenar
+        const url = await storage(files[0], pathImage);
+
+        if (url != undefined && url != null) {
+          user.image = url;
+        }
+      }
+      await User.Update(user);
+      console.log(user);
+      return res.status(201).json({
+        success: true,
+        message: "Los datos del usuario fueron actualizados correctamente",
+        user,
+      });
+    } catch (error) {
+      console.log(`Error: ${error}`);
+      return res.status(501).json({
+        success: false,
+        message: "Hubo un error en la actualización de datos del usuario",
         error: error,
       });
     }
@@ -56,7 +193,8 @@ module.exports = {
           keys.secretOrKey,
           {
             // expiresIn: (60*60*24) // 1 HORA
-            // expiresIn: (60 * 3) // 2 MINUTO
+            /* expiresIn: 60 * 3, */
+            // 2 MINUTO
           }
         );
         const data = {
@@ -66,11 +204,13 @@ module.exports = {
           email: myUser.email,
           phone: myUser.phone,
           image: myUser.image,
-          session_token: `JWT ${token}`, // REVISA QUE ESTE LLEGANDO ESTE CAMPO
+          session_token: `JWT ${token}`,
           roles: myUser.roles,
         };
 
-        console.log(`DATA ENVIADA ${data}`); // AQUI PUEDES VER QUE DATOS ESTAS ENVIANDO
+        await User.updateToken(myUser.id, `JWT ${token}`);
+
+        console.log(`USUARIO ENVIADO ${data}`);
 
         return res.status(201).json({
           success: true,
@@ -89,6 +229,23 @@ module.exports = {
         success: false,
         message: "Error al momento de hacer login",
         error: error,
+      });
+    }
+  },
+  async logout(req, res, next) {
+    try {
+      const id = req.body.id;
+      await User.deleteToken(id); // Utilizamos la función deleteToken para eliminar el token
+      return res.status(201).json({
+        success: true,
+        message: "La sesión del usuario se ha cerrado correctamente",
+      });
+    } catch (e) {
+      console.log(`Error: ${e}`);
+      return res.status(501).json({
+        success: false,
+        message: "Error al momento de cerrar sesión",
+        error: e,
       });
     }
   },
